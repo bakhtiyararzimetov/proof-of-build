@@ -1,6 +1,6 @@
 # Proof of Build
 
-[![CI](https://github.com/Bakhtiyar121/proof-of-build/actions/workflows/ci.yml/badge.svg)](https://github.com/Bakhtiyar121/proof-of-build/actions/workflows/ci.yml)
+[![CI](https://github.com/bakhtiyararzimetov/proof-of-build/actions/workflows/ci.yml/badge.svg)](https://github.com/bakhtiyararzimetov/proof-of-build/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-14F195.svg)](LICENSE)
 [![Solana](https://img.shields.io/badge/Solana-devnet-9945FF)](https://explorer.solana.com/address/8GYmgRJ9iRNE9kmBf5HkAfMu23Fdh6ES8XvXMbNdYvJw?cluster=devnet)
 [![Hackathon](https://img.shields.io/badge/Colosseum-2026-14F195)](https://colosseum.org)
@@ -113,7 +113,7 @@ See [docs/architecture.md](docs/architecture.md) for the full breakdown.
 
 ```bash
 # Clone the repository
-git clone https://github.com/Bakhtiyar121/proof-of-build
+git clone https://github.com/bakhtiyararzimetov/proof-of-build
 cd proof-of-build
 
 # Smart contract: build and run 53 tests
