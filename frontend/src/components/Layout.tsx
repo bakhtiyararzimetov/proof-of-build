@@ -6,7 +6,7 @@ import { useAuth } from "../lib/auth";
 import { errMessage } from "../lib/format";
 import { useToast } from "./Toast";
 import { Logo, LogoMark } from "./Logo";
-import { BrandDefs } from "./ui";
+import { Avatar, BrandDefs } from "./ui";
 import { InstallApp } from "./InstallApp";
 
 const navLink = ({ isActive }: { isActive: boolean }) =>
@@ -29,7 +29,7 @@ function UserChip() {
   return (
     <div className="flex items-center gap-1">
       <Link to="/account" title={`@${me.githubLogin}`} className="rounded-full ring-2 ring-white transition hover:ring-zinc-200">
-        <img src={`https://github.com/${me.githubLogin}.png?size=64`} alt={me.githubLogin} className="size-9 rounded-full" />
+        <Avatar login={me.githubLogin} />
       </Link>
       <button onClick={logout} className="grid size-9 place-items-center rounded-full text-muted hover:bg-black/5 hover:text-ink" aria-label="Sign out">
         <LogOut className="size-4" />

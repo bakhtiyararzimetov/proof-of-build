@@ -190,3 +190,26 @@ export function BrandDefs() {
     </svg>
   );
 }
+
+/** GitHub avatar; falls back to the first letter if the image can't load (offline, blocked, no login). */
+export function Avatar({ login, className = "size-9" }: { login?: string | null; className?: string }) {
+  const [failed, setFailed] = useState(!login);
+  if (failed)
+    return (
+      <span
+        title={login ?? undefined}
+        className={`brand-soft grid shrink-0 place-items-center rounded-full text-xs font-semibold text-brand uppercase ${className}`}
+      >
+        {login?.[0] ?? "?"}
+      </span>
+    );
+  return (
+    <img
+      src={`https://github.com/${login}.png?size=64`}
+      alt={login ?? ""}
+      title={login ?? undefined}
+      onError={() => setFailed(true)}
+      className={`shrink-0 rounded-full bg-zinc-100 ${className}`}
+    />
+  );
+}

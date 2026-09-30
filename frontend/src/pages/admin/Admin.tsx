@@ -174,7 +174,7 @@ function Timeline({ h }: { h: HackathonDetail }) {
     <ol className="flex flex-col gap-2 text-sm">
       {steps.map((s) => (
         <li key={s.label} className="flex items-center gap-3">
-          <span className={`size-2 shrink-0 rounded-full ${now >= s.at ? "bg-ink-2" : "bg-white/20"}`} />
+          <span className={`size-2 shrink-0 rounded-full ${now >= s.at ? "brand-grad" : "bg-zinc-300"}`} />
           <span className="w-36 shrink-0 text-xs text-muted">{fmtDate(s.at, true)}</span>
           <span className={now >= s.at ? "" : "text-muted"}>{s.label}</span>
         </li>

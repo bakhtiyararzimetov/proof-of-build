@@ -12,7 +12,7 @@ import {
 } from "../../lib/api";
 import { MAX_MEMBERS, explorerTx } from "../../lib/config";
 import { errMessage, fmtDate, shortAddr, shortSha } from "../../lib/format";
-import { Badge, Button, Card, CopyButton, SectionTitle } from "../../components/ui";
+import { Avatar, Badge, Button, Card, CopyButton, SectionTitle } from "../../components/ui";
 import { FireRow } from "../../components/FireRow";
 import { useToast } from "../../components/Toast";
 
@@ -169,11 +169,7 @@ export function MembersList({ rows, captain }: { rows: ParticipantRow[]; captain
     <ul className="flex flex-col gap-3">
       {rows.map((r) => (
         <li key={r.address} className="flex items-center gap-3">
-          <img
-            src={`https://github.com/${r.githubLogin ?? "ghost"}.png?size=64`}
-            alt=""
-            className="size-9 rounded-full bg-zinc-100"
-          />
+          <Avatar login={r.githubLogin} />
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium">{r.githubLogin ?? shortAddr(r.wallet)}</p>
             <p className="text-xs text-muted">{r.wallet === captain ? "Leader" : "Developer"}</p>
@@ -216,7 +212,7 @@ export function TeamSection({
         <ul className="divide-y divide-line">
           {rows.map((r) => (
             <li key={r.address} className="flex flex-wrap items-center gap-3 py-3">
-              <img src={`https://github.com/${r.githubLogin ?? "ghost"}.png?size=64`} alt="" className="size-8 rounded-full border border-line" />
+              <Avatar login={r.githubLogin} className="size-8 border border-line" />
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium">
                   {r.githubLogin ?? "unknown"}

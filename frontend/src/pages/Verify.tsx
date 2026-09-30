@@ -77,7 +77,7 @@ export default function Verify() {
       <Card className="mt-6 flex flex-col gap-3 p-5">
         <div className="flex gap-2">
           {(["hash", "text"] as const).map((m) => (
-            <button key={m} onClick={() => setMode(m)} className={`rounded-md px-3 py-1 text-xs font-semibold ${mode === m ? "bg-ink" : "border border-line text-muted"}`}>
+            <button key={m} onClick={() => setMode(m)} className={`rounded-full px-3.5 py-1 text-xs font-semibold ${mode === m ? "bg-ink text-white" : "border border-line text-muted hover:text-ink"}`}>
               {m === "hash" ? "Hash" : "Letter text"}
             </button>
           ))}

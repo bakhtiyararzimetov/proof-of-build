@@ -9,7 +9,7 @@ import { errMessage, fmtDate, shortAddr, usdc } from "../lib/format";
 import { PublicKey } from "@solana/web3.js";
 import { signAndSendServerTx, useProgram } from "../lib/program";
 import { MAX_MEMBERS, explorerAddress } from "../lib/config";
-import { Button, Card, ErrorBox, LinkButton, SectionTitle, Spinner, Stat, phaseBadge } from "../components/ui";
+import { Avatar, Button, Card, ErrorBox, LinkButton, SectionTitle, Spinner, Stat, phaseBadge } from "../components/ui";
 import { CoverArt } from "../components/Art";
 import { AccountSetup, useReady } from "../components/AccountSetup";
 import { useToast } from "../components/Toast";
@@ -332,7 +332,7 @@ export default function HackathonDetails() {
             ) : (
               <div className="mt-3 flex items-center">
                 {logins.slice(0, 5).map((l) => (
-                  <img key={l} src={`https://github.com/${l}.png?size=64`} alt={l} title={l} className="-mr-2 size-9 rounded-full border-2 border-white bg-zinc-100" />
+                  <Avatar key={l} login={l} className="-mr-2 size-9 border-2 border-white" />
                 ))}
                 {logins.length > 5 && (
                   <span className="ml-4 rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-muted">+{logins.length - 5}</span>
