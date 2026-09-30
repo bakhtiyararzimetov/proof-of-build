@@ -1,0 +1,1824 @@
+{
+  "address": "8GYmgRJ9iRNE9kmBf5HkAfMu23Fdh6ES8XvXMbNdYvJw",
+  "metadata": {
+    "name": "proof_of_build",
+    "version": "0.1.0",
+    "spec": "0.1.0"
+  },
+  "instructions": [
+    {
+      "name": "claim",
+      "docs": [
+        "Pays whatever is available now; can be called again later for the rest",
+        "(e.g. the deposit right after finalize, the prize once winners are known)."
+      ],
+      "discriminator": [
+        62,
+        198,
+        214,
+        193,
+        213,
+        159,
+        108,
+        210
+      ],
+      "accounts": [
+        {
+          "name": "wallet",
+          "signer": true,
+          "relations": [
+            "participant"
+          ]
+        },
+        {
+          "name": "hackathon",
+          "relations": [
+            "team"
+          ]
+        },
+        {
+          "name": "team",
+          "relations": [
+            "participant"
+          ]
+        },
+        {
+          "name": "participant",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  114,
+                  116,
+                  105,
+                  99,
+                  105,
+                  112,
+                  97,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "hackathon"
+              },
+              {
+                "kind": "account",
+                "path": "wallet"
+              }
+            ]
+          }
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "hackathon"
+              }
+            ]
+          }
+        },
+        {
+          "name": "wallet_token",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "create_hackathon",
+      "discriminator": [
+        228,
+        148,
+        238,
+        246,
+        21,
+        223,
+        47,
+        69
+      ],
+      "accounts": [
+        {
+          "name": "organizer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "hackathon",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  97,
+                  99,
+                  107,
+                  97,
+                  116,
+                  104,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "organizer"
+              },
+              {
+                "kind": "arg",
+                "path": "hackathon_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "hackathon"
+              }
+            ]
+          }
+        },
+        {
+          "name": "organizer_token",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "hackathon_id",
+          "type": "u64"
+        },
+        {
+          "name": "oracle",
+          "type": "pubkey"
+        },
+        {
+          "name": "start_ts",
+          "type": "i64"
+        },
+        {
+          "name": "end_ts",
+          "type": "i64"
+        },
+        {
+          "name": "registration_end_ts",
+          "type": "i64"
+        },
+        {
+          "name": "deposit_amount",
+          "type": "u64"
+        },
+        {
+          "name": "required_fires",
+          "type": "u16"
+        },
+        {
+          "name": "prize_amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "disqualify",
+      "docs": [
+        "Organizer excludes a cheater. The deposit is forfeited to the prize pool (never to the",
+        "organizer) and the participant gets no prize. Only before winners are set and before the",
+        "participant is settled, so payouts computed later cannot change."
+      ],
+      "discriminator": [
+        201,
+        66,
+        235,
+        23,
+        192,
+        124,
+        174,
+        234
+      ],
+      "accounts": [
+        {
+          "name": "organizer",
+          "signer": true,
+          "relations": [
+            "hackathon"
+          ]
+        },
+        {
+          "name": "hackathon",
+          "writable": true,
+          "relations": [
+            "participant"
+          ]
+        },
+        {
+          "name": "participant",
+          "writable": true
+        },
+        {
+          "name": "team",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "reason_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "finalize",
+      "discriminator": [
+        171,
+        61,
+        218,
+        56,
+        127,
+        115,
+        12,
+        217
+      ],
+      "accounts": [
+        {
+          "name": "cranker",
+          "signer": true
+        },
+        {
+          "name": "hackathon",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "join_team",
+      "discriminator": [
+        244,
+        30,
+        215,
+        53,
+        96,
+        145,
+        4,
+        206
+      ],
+      "accounts": [
+        {
+          "name": "wallet",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "oracle",
+          "signer": true,
+          "relations": [
+            "hackathon"
+          ]
+        },
+        {
+          "name": "hackathon",
+          "writable": true,
+          "relations": [
+            "team"
+          ]
+        },
+        {
+          "name": "team",
+          "writable": true
+        },
+        {
+          "name": "participant",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  114,
+                  116,
+                  105,
+                  99,
+                  105,
+                  112,
+                  97,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "hackathon"
+              },
+              {
+                "kind": "account",
+                "path": "wallet"
+              }
+            ]
+          }
+        },
+        {
+          "name": "github_link",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  105,
+                  116,
+                  104,
+                  117,
+                  98
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "hackathon"
+              },
+              {
+                "kind": "arg",
+                "path": "github_id_hash"
+              }
+            ]
+          }
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "hackathon"
+              }
+            ]
+          }
+        },
+        {
+          "name": "wallet_token",
+          "writable": true,
+          "optional": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "github_id_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "record_attestation",
+      "discriminator": [
+        148,
+        43,
+        225,
+        77,
+        15,
+        134,
+        217,
+        54
+      ],
+      "accounts": [
+        {
+          "name": "oracle",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "hackathon"
+          ]
+        },
+        {
+          "name": "hackathon",
+          "relations": [
+            "participant"
+          ]
+        },
+        {
+          "name": "participant"
+        },
+        {
+          "name": "attestation",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  116,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "participant"
+              },
+              {
+                "kind": "arg",
+                "path": "letter_hash"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "letter_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "record_fire",
+      "docs": [
+        "`pushed_at` is GitHub's push time (repository.pushed_at). The day is derived from it,",
+        "so a webhook that arrives late (up to FIRE_GRACE) still lands on the right day."
+      ],
+      "discriminator": [
+        24,
+        92,
+        189,
+        131,
+        208,
+        231,
+        110,
+        176
+      ],
+      "accounts": [
+        {
+          "name": "oracle",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "hackathon"
+          ]
+        },
+        {
+          "name": "hackathon",
+          "writable": true,
+          "relations": [
+            "participant"
+          ]
+        },
+        {
+          "name": "participant",
+          "writable": true
+        },
+        {
+          "name": "team",
+          "writable": true
+        },
+        {
+          "name": "fire_record",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  105,
+                  114,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "participant"
+              },
+              {
+                "kind": "arg",
+                "path": "day_index"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "day_index",
+          "type": "u16"
+        },
+        {
+          "name": "commit_hash",
+          "type": {
+            "array": [
+              "u8",
+              20
+            ]
+          }
+        },
+        {
+          "name": "pushed_at",
+          "type": "i64"
+        }
+      ]
+    },
+    {
+      "name": "register_team",
+      "discriminator": [
+        12,
+        29,
+        209,
+        52,
+        168,
+        44,
+        109,
+        66
+      ],
+      "accounts": [
+        {
+          "name": "wallet",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "oracle",
+          "signer": true,
+          "relations": [
+            "hackathon"
+          ]
+        },
+        {
+          "name": "hackathon",
+          "writable": true
+        },
+        {
+          "name": "team",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  101,
+                  97,
+                  109
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "hackathon"
+              },
+              {
+                "kind": "arg",
+                "path": "name"
+              }
+            ]
+          }
+        },
+        {
+          "name": "participant",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  114,
+                  116,
+                  105,
+                  99,
+                  105,
+                  112,
+                  97,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "hackathon"
+              },
+              {
+                "kind": "account",
+                "path": "wallet"
+              }
+            ]
+          }
+        },
+        {
+          "name": "github_link",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  105,
+                  116,
+                  104,
+                  117,
+                  98
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "hackathon"
+              },
+              {
+                "kind": "arg",
+                "path": "github_id_hash"
+              }
+            ]
+          }
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "hackathon"
+              }
+            ]
+          }
+        },
+        {
+          "name": "wallet_token",
+          "writable": true,
+          "optional": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "github_id_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "set_winners",
+      "discriminator": [
+        96,
+        110,
+        12,
+        157,
+        13,
+        102,
+        230,
+        153
+      ],
+      "accounts": [
+        {
+          "name": "organizer",
+          "signer": true,
+          "relations": [
+            "hackathon"
+          ]
+        },
+        {
+          "name": "hackathon",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "winners",
+          "type": {
+            "vec": {
+              "defined": {
+                "name": "WinnerInput"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "sweep",
+      "docs": [
+        "After the claim window the organizer takes back what nobody claimed."
+      ],
+      "discriminator": [
+        40,
+        23,
+        234,
+        175,
+        14,
+        61,
+        154,
+        177
+      ],
+      "accounts": [
+        {
+          "name": "organizer",
+          "signer": true,
+          "relations": [
+            "hackathon"
+          ]
+        },
+        {
+          "name": "hackathon"
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "hackathon"
+              }
+            ]
+          }
+        },
+        {
+          "name": "organizer_token",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Attestation",
+      "discriminator": [
+        152,
+        125,
+        183,
+        86,
+        36,
+        146,
+        121,
+        73
+      ]
+    },
+    {
+      "name": "FireRecord",
+      "discriminator": [
+        122,
+        220,
+        8,
+        188,
+        102,
+        226,
+        82,
+        69
+      ]
+    },
+    {
+      "name": "GithubLink",
+      "discriminator": [
+        100,
+        53,
+        57,
+        80,
+        27,
+        27,
+        125,
+        106
+      ]
+    },
+    {
+      "name": "Hackathon",
+      "discriminator": [
+        180,
+        85,
+        208,
+        43,
+        178,
+        243,
+        204,
+        107
+      ]
+    },
+    {
+      "name": "Participant",
+      "discriminator": [
+        32,
+        142,
+        108,
+        79,
+        247,
+        179,
+        54,
+        6
+      ]
+    },
+    {
+      "name": "Team",
+      "discriminator": [
+        140,
+        218,
+        177,
+        140,
+        193,
+        241,
+        199,
+        106
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "AttestationRecorded",
+      "discriminator": [
+        207,
+        97,
+        52,
+        58,
+        217,
+        238,
+        97,
+        21
+      ]
+    },
+    {
+      "name": "Claimed",
+      "discriminator": [
+        217,
+        192,
+        123,
+        72,
+        108,
+        150,
+        248,
+        33
+      ]
+    },
+    {
+      "name": "FireRecorded",
+      "discriminator": [
+        89,
+        97,
+        78,
+        85,
+        176,
+        219,
+        98,
+        31
+      ]
+    },
+    {
+      "name": "HackathonFinalized",
+      "discriminator": [
+        231,
+        43,
+        80,
+        145,
+        109,
+        138,
+        15,
+        108
+      ]
+    },
+    {
+      "name": "ParticipantDisqualified",
+      "discriminator": [
+        116,
+        237,
+        78,
+        6,
+        146,
+        173,
+        196,
+        12
+      ]
+    },
+    {
+      "name": "ParticipantJoined",
+      "discriminator": [
+        48,
+        182,
+        206,
+        15,
+        56,
+        181,
+        24,
+        253
+      ]
+    },
+    {
+      "name": "Swept",
+      "discriminator": [
+        254,
+        138,
+        9,
+        198,
+        192,
+        61,
+        165,
+        135
+      ]
+    },
+    {
+      "name": "TeamRegistered",
+      "discriminator": [
+        34,
+        196,
+        222,
+        157,
+        183,
+        10,
+        215,
+        104
+      ]
+    },
+    {
+      "name": "WinnersSet",
+      "discriminator": [
+        128,
+        237,
+        22,
+        100,
+        81,
+        28,
+        15,
+        96
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidTimeRange",
+      "msg": "Invalid time range: start < end, end in the future, registration end in (now, end], duration <= 64 days"
+    },
+    {
+      "code": 6001,
+      "name": "InvalidRequiredFires",
+      "msg": "required_fires must be between 1 and the number of days"
+    },
+    {
+      "code": 6002,
+      "name": "ZeroPrize",
+      "msg": "prize_amount must be > 0"
+    },
+    {
+      "code": 6003,
+      "name": "NameTooLong",
+      "msg": "Team name must be 1..=32 bytes"
+    },
+    {
+      "code": 6004,
+      "name": "RegistrationClosed",
+      "msg": "Registration is closed"
+    },
+    {
+      "code": 6005,
+      "name": "TeamFull",
+      "msg": "The team already has 5 members"
+    },
+    {
+      "code": 6006,
+      "name": "DepositAccountMissing",
+      "msg": "wallet_token is required when deposit_amount > 0"
+    },
+    {
+      "code": 6007,
+      "name": "UnauthorizedOracle",
+      "msg": "The signer is not the hackathon oracle"
+    },
+    {
+      "code": 6008,
+      "name": "UnauthorizedOrganizer",
+      "msg": "The signer is not the hackathon organizer"
+    },
+    {
+      "code": 6009,
+      "name": "HackathonNotStarted",
+      "msg": "The hackathon has not started yet"
+    },
+    {
+      "code": 6010,
+      "name": "HackathonEnded",
+      "msg": "The hackathon has already ended"
+    },
+    {
+      "code": 6011,
+      "name": "HackathonNotEnded",
+      "msg": "Settlement has not started yet (end_ts + grace period)"
+    },
+    {
+      "code": 6012,
+      "name": "WrongDayIndex",
+      "msg": "day_index does not match the push day"
+    },
+    {
+      "code": 6013,
+      "name": "DayAlreadyRecorded",
+      "msg": "A fire for this day has already been recorded"
+    },
+    {
+      "code": 6014,
+      "name": "WinnersAlreadySet",
+      "msg": "Winners have already been set"
+    },
+    {
+      "code": 6015,
+      "name": "InvalidWinners",
+      "msg": "Invalid winners: 1..=3 distinct teams, bps > 0, sum of bps == 10000"
+    },
+    {
+      "code": 6016,
+      "name": "WinnerTeamMismatch",
+      "msg": "A winning team does not belong to this hackathon"
+    },
+    {
+      "code": 6017,
+      "name": "AlreadySettled",
+      "msg": "The participant has already been settled"
+    },
+    {
+      "code": 6018,
+      "name": "WrongHackathon",
+      "msg": "The account belongs to a different hackathon"
+    },
+    {
+      "code": 6019,
+      "name": "NotFinalized",
+      "msg": "The hackathon is not finalized yet"
+    },
+    {
+      "code": 6020,
+      "name": "WinnersNotSet",
+      "msg": "Winners have not been set yet"
+    },
+    {
+      "code": 6021,
+      "name": "AlreadyClaimed",
+      "msg": "Already claimed"
+    },
+    {
+      "code": 6022,
+      "name": "NothingToClaim",
+      "msg": "Nothing to claim"
+    },
+    {
+      "code": 6023,
+      "name": "NotTeamMember",
+      "msg": "The participant is not a member of this team"
+    },
+    {
+      "code": 6024,
+      "name": "MathOverflow",
+      "msg": "Arithmetic overflow"
+    },
+    {
+      "code": 6025,
+      "name": "AlreadyFinalized",
+      "msg": "The hackathon is already finalized"
+    },
+    {
+      "code": 6026,
+      "name": "AccountNotWritable",
+      "msg": "Participant accounts passed to finalize must be writable"
+    },
+    {
+      "code": 6027,
+      "name": "OrganizerCannotParticipate",
+      "msg": "The organizer cannot participate in their own hackathon"
+    },
+    {
+      "code": 6028,
+      "name": "InvalidPushTime",
+      "msg": "pushed_at is in the future"
+    },
+    {
+      "code": 6029,
+      "name": "FireTooLate",
+      "msg": "The push is older than the grace period"
+    },
+    {
+      "code": 6030,
+      "name": "Disqualified",
+      "msg": "The participant is disqualified"
+    },
+    {
+      "code": 6031,
+      "name": "AlreadyDisqualified",
+      "msg": "The participant is already disqualified"
+    },
+    {
+      "code": 6032,
+      "name": "WinnersDeadlinePassed",
+      "msg": "The deadline for choosing winners has passed"
+    },
+    {
+      "code": 6033,
+      "name": "TeamNotQualified",
+      "msg": "Nobody in this team met the goal"
+    },
+    {
+      "code": 6034,
+      "name": "ClaimWindowOpen",
+      "msg": "The claim window is still open"
+    }
+  ],
+  "types": [
+    {
+      "name": "Attestation",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "participant",
+            "type": "pubkey"
+          },
+          {
+            "name": "letter_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "created_at",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AttestationRecorded",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "participant",
+            "type": "pubkey"
+          },
+          {
+            "name": "letter_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Claimed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "participant",
+            "type": "pubkey"
+          },
+          {
+            "name": "deposit_refund",
+            "type": "u64"
+          },
+          {
+            "name": "prize_share",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FireRecord",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "participant",
+            "type": "pubkey"
+          },
+          {
+            "name": "day_index",
+            "type": "u16"
+          },
+          {
+            "name": "commit_hash",
+            "type": {
+              "array": [
+                "u8",
+                20
+              ]
+            }
+          },
+          {
+            "name": "pushed_at",
+            "docs": [
+              "GitHub's push time"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "recorded_at",
+            "docs": [
+              "On-chain time the fire was recorded"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FireRecorded",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "hackathon",
+            "type": "pubkey"
+          },
+          {
+            "name": "participant",
+            "type": "pubkey"
+          },
+          {
+            "name": "day_index",
+            "type": "u16"
+          },
+          {
+            "name": "commit_hash",
+            "type": {
+              "array": [
+                "u8",
+                20
+              ]
+            }
+          },
+          {
+            "name": "fires",
+            "type": "u16"
+          }
+        ]
+      }
+    },
+    {
+      "name": "GithubLink",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "hackathon",
+            "type": "pubkey"
+          },
+          {
+            "name": "participant",
+            "type": "pubkey"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Hackathon",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "organizer",
+            "type": "pubkey"
+          },
+          {
+            "name": "oracle",
+            "type": "pubkey"
+          },
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "vault",
+            "type": "pubkey"
+          },
+          {
+            "name": "hackathon_id",
+            "type": "u64"
+          },
+          {
+            "name": "start_ts",
+            "type": "i64"
+          },
+          {
+            "name": "end_ts",
+            "type": "i64"
+          },
+          {
+            "name": "registration_end_ts",
+            "type": "i64"
+          },
+          {
+            "name": "deposit_amount",
+            "type": "u64"
+          },
+          {
+            "name": "required_fires",
+            "type": "u16"
+          },
+          {
+            "name": "prize_pool",
+            "docs": [
+              "Prizes + forfeited deposits (grows during finalize)."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "team_count",
+            "type": "u32"
+          },
+          {
+            "name": "participant_count",
+            "type": "u32"
+          },
+          {
+            "name": "settled_count",
+            "type": "u32"
+          },
+          {
+            "name": "qualified_count",
+            "docs": [
+              "Participants with fires >= required_fires who are not disqualified."
+            ],
+            "type": "u32"
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": {
+                "name": "HackathonStatus"
+              }
+            }
+          },
+          {
+            "name": "winners_set",
+            "type": "bool"
+          },
+          {
+            "name": "winner_count",
+            "type": "u8"
+          },
+          {
+            "name": "winners",
+            "type": {
+              "array": [
+                {
+                  "defined": {
+                    "name": "Winner"
+                  }
+                },
+                3
+              ]
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "vault_bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "HackathonFinalized",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "hackathon",
+            "type": "pubkey"
+          },
+          {
+            "name": "prize_pool",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "HackathonStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Active"
+          },
+          {
+            "name": "Finalized"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Participant",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "hackathon",
+            "type": "pubkey"
+          },
+          {
+            "name": "team",
+            "type": "pubkey"
+          },
+          {
+            "name": "wallet",
+            "type": "pubkey"
+          },
+          {
+            "name": "github_id_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "fires",
+            "type": "u16"
+          },
+          {
+            "name": "days_bitmap",
+            "docs": [
+              "Bit i = a fire on day i."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "deposit_paid",
+            "type": "bool"
+          },
+          {
+            "name": "disqualified",
+            "type": "bool"
+          },
+          {
+            "name": "disqualify_reason",
+            "docs": [
+              "SHA-256 of the organizer's reason text (the text itself is off-chain)."
+            ],
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "settled",
+            "type": "bool"
+          },
+          {
+            "name": "refund_claimed",
+            "type": "bool"
+          },
+          {
+            "name": "prize_claimed",
+            "type": "bool"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ParticipantDisqualified",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "hackathon",
+            "type": "pubkey"
+          },
+          {
+            "name": "participant",
+            "type": "pubkey"
+          },
+          {
+            "name": "reason_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "ParticipantJoined",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "hackathon",
+            "type": "pubkey"
+          },
+          {
+            "name": "team",
+            "type": "pubkey"
+          },
+          {
+            "name": "participant",
+            "type": "pubkey"
+          },
+          {
+            "name": "wallet",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Swept",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "hackathon",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Team",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "hackathon",
+            "type": "pubkey"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "captain",
+            "type": "pubkey"
+          },
+          {
+            "name": "members",
+            "type": {
+              "vec": "pubkey"
+            }
+          },
+          {
+            "name": "qualified_count",
+            "docs": [
+              "Members who met the goal; the team's prize share is split between them only."
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TeamRegistered",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "hackathon",
+            "type": "pubkey"
+          },
+          {
+            "name": "team",
+            "type": "pubkey"
+          },
+          {
+            "name": "captain",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Winner",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "team",
+            "type": "pubkey"
+          },
+          {
+            "name": "bps",
+            "type": "u16"
+          }
+        ]
+      }
+    },
+    {
+      "name": "WinnerInput",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "team",
+            "type": "pubkey"
+          },
+          {
+            "name": "bps",
+            "type": "u16"
+          }
+        ]
+      }
+    },
+    {
+      "name": "WinnersSet",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "hackathon",
+            "type": "pubkey"
+          },
+          {
+            "name": "winners",
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "Winner"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

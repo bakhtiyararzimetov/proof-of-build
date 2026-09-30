@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    name: Validate Repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check required files exist
+        run: |
+          for f in README.md LICENSE CONTRIBUTING.md .env.example; do test -f "$f" && echo "✓ $f"; done
+          test -d docs && echo "✓ docs/"
+          test -f assets/project.jpg && echo "✓ assets/project.jpg"
+      - name: No secrets committed
+        run: |
+          ! git ls-files | grep -E '(^|/)\.env$|oracle\.json$|\.pem$|-keypair\.json$'
+          echo "✓ no secret files tracked"
+
+  backend:
+    name: Backend (typecheck + tests)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - run: npm ci --legacy-peer-deps
+      - run: npx prisma generate
+      - run: npm run typecheck
+      - run: npm test
+
+  frontend:
+    name: Frontend (typecheck + build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --legacy-peer-deps
+      - run: npm run build

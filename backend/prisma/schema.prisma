@@ -1,0 +1,173 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url       = env("DATABASE_URL")
+  /// Direct (session-mode) connection for migrations; with pgbouncer DATABASE_URL cannot run them.
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id              String        @id @default(cuid())
+  githubId        BigInt        @unique
+  githubLogin     String
+  /// HMAC-SHA256(GITHUB_ID_SALT, githubId), hex. The only GitHub-derived value that goes on-chain.
+  githubIdHash    String        @unique
+  email           String?
+  /// GitHub account creation time (throwaway-account check)
+  githubCreatedAt DateTime?
+  wallet          String?       @unique
+  createdAt       DateTime      @default(now())
+  participants    Participant[]
+  nonces          WalletNonce[]
+}
+
+model WalletNonce {
+  nonce     String    @id
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wallet    String
+  message   String
+  expiresAt DateTime
+  usedAt    DateTime?
+}
+
+/// Off-chain metadata of an on-chain Hackathon account (id = account address).
+model Hackathon {
+  id            String        @id
+  title         String
+  description   String        @default("")
+  organizer     String
+  startTs       DateTime
+  endTs         DateTime
+  requiredFires Int
+  createdAt     DateTime      @default(now())
+  teams         Team[]
+  participants  Participant[]
+  repos         Repo[]
+}
+
+/// id = on-chain Team address.
+model Team {
+  id           String        @id
+  hackathonId  String
+  hackathon    Hackathon     @relation(fields: [hackathonId], references: [id], onDelete: Cascade)
+  name         String
+  captain      String
+  inviteCode   String        @unique
+  createdAt    DateTime      @default(now())
+  repos        Repo[]
+  participants Participant[]
+}
+
+/// id = on-chain Participant address. Created when the registration transaction is built;
+/// the on-chain account is the source of truth for membership and fires.
+model Participant {
+  id                 String        @id
+  hackathonId        String
+  hackathon          Hackathon     @relation(fields: [hackathonId], references: [id], onDelete: Cascade)
+  teamId             String
+  team               Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  userId             String
+  user               User          @relation(fields: [userId], references: [id])
+  wallet             String
+  /// Organizer's reason text; its SHA-256 is on-chain (Participant.disqualify_reason)
+  disqualifiedReason String?
+  createdAt          DateTime      @default(now())
+  fires              Fire[]
+  flags              FraudFlag[]
+  commits            Commit[]
+  attestations       Attestation[]
+
+  @@unique([hackathonId, userId])
+}
+
+model Repo {
+  /// GitHub repository id
+  id              BigInt      @id
+  fullName        String
+  hackathonId     String
+  hackathon       Hackathon   @relation(fields: [hackathonId], references: [id], onDelete: Cascade)
+  teamId          String
+  team            Team        @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  installationId  BigInt
+  githubCreatedAt DateTime
+  createdAt       DateTime    @default(now())
+  commits         Commit[]
+  flags           FraudFlag[]
+}
+
+model Commit {
+  id            String       @id @default(cuid())
+  sha           String
+  repoId        BigInt
+  repo          Repo         @relation(fields: [repoId], references: [id], onDelete: Cascade)
+  participantId String?
+  participant   Participant? @relation(fields: [participantId], references: [id])
+  authorLogin   String?
+  authoredAt    DateTime
+  pushedAt      DateTime
+  additions     Int?
+  deletions     Int?
+
+  @@unique([repoId, sha])
+  @@index([participantId])
+}
+
+model Fire {
+  id            String      @id @default(cuid())
+  participantId String
+  participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  dayIndex      Int
+  commitSha     String
+  /// null while the record_fire transaction is in flight
+  txSignature   String?
+  createdAt     DateTime    @default(now())
+
+  @@unique([participantId, dayIndex])
+}
+
+enum FraudKind {
+  REPO_CREATED_BEFORE_START
+  HUGE_COMMIT
+  BULK_PUSH
+  COMMIT_DATE_SKEW
+  FORCE_PUSH
+  AUTHOR_MISMATCH
+  NEW_GITHUB_ACCOUNT
+  INACTIVE_MEMBER
+}
+
+model FraudFlag {
+  id            String       @id @default(cuid())
+  kind          FraudKind
+  participantId String?
+  participant   Participant? @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  repoId        BigInt?
+  repo          Repo?        @relation(fields: [repoId], references: [id], onDelete: Cascade)
+  /// Makes flag creation idempotent (webhook redeliveries)
+  dedupeKey     String       @unique
+  details       Json
+  createdAt     DateTime     @default(now())
+}
+
+model Attestation {
+  id            String      @id @default(cuid())
+  /// One letter per participant: repeated requests return it instead of paying for a new transaction
+  participantId String      @unique
+  participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  /// SHA-256 of letterBody, hex
+  letterHash    String      @unique
+  letterBody    String
+  txSignature   String?
+  emailId       String?
+  createdAt     DateTime    @default(now())
+}
+
+model WebhookDelivery {
+  id         String   @id
+  event      String
+  receivedAt DateTime @default(now())
+}

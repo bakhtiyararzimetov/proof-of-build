@@ -1,0 +1,156 @@
+@import "tailwindcss";
+
+/* Light system: black primary buttons, white surfaces, gray lines.
+   Brand accent: violet #7B3DFF -> pink #FF2D8B (progress, fires, Live, icons). */
+@theme {
+  --color-bg: #f4f4f5;
+  --color-card: #ffffff;
+  --color-card-2: #fafafa;
+  --color-line: #e5e7eb;
+  --color-ink: #0a0a0a;
+  --color-ink-2: #1a1a1a;
+  --color-accent: #7b3dff;
+  --color-accent-hi: #ff2d8b;
+  --color-brand: #7b3dff;
+  --color-brand-2: #ff2d8b;
+  --color-muted: #71717a;
+  --color-ok: #16a34a;
+  --color-warn: #d97706;
+  --color-danger: #dc2626;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+html,
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-brand);
+  color: #fff;
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl border border-line bg-card shadow-[0_1px_2px_rgba(0,0,0,0.04)];
+  }
+  .card-hover {
+    @apply transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_12px_32px_-12px_rgba(0,0,0,0.18)];
+  }
+  /* Soft studio backdrop behind hero / banners */
+  .studio {
+    background:
+      radial-gradient(120% 90% at 80% 20%, #ffffff 0%, rgba(255, 255, 255, 0) 60%),
+      linear-gradient(135deg, #f7f7f8 0%, #e9e9ec 55%, #dcdce0 100%);
+  }
+  .input {
+    @apply w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-ink placeholder:text-muted/70 outline-none transition focus:border-brand focus:ring-4 focus:ring-brand/10;
+  }
+  .label {
+    @apply mb-1.5 block text-xs font-medium text-muted;
+  }
+  /* Violet -> pink brand gradient */
+  .brand-grad {
+    background-image: linear-gradient(90deg, var(--color-brand), var(--color-brand-2));
+  }
+  /* Soft tinted circle behind an accent icon */
+  .brand-soft {
+    background: linear-gradient(135deg, rgba(123, 61, 255, 0.1), rgba(255, 45, 139, 0.08));
+  }
+  /* Apply to lucide icons: stroke + fill with the brand gradient (defs in <BrandDefs/>) */
+  .icon-grad {
+    stroke: url(#pob-grad);
+  }
+  .icon-grad-fill {
+    stroke: url(#pob-grad);
+    fill: url(#pob-grad);
+  }
+  .table-head {
+    @apply text-left text-[11px] font-medium text-muted;
+  }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+.rise {
+  animation: rise 0.45s ease-out both;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(-1deg); }
+}
+.float {
+  animation: float 7s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .float, .rise { animation: none; }
+}
+
+/* Wallet adapter in the brand style: black pill */
+.wallet-adapter-button {
+  height: 36px !important;
+  border-radius: 999px !important;
+  font-family: var(--font-sans) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  padding: 0 16px !important;
+  background: var(--color-ink) !important;
+  color: #fff !important;
+}
+.wallet-adapter-button:not([disabled]):hover {
+  background: var(--color-ink-2) !important;
+}
+.wallet-adapter-button-start-icon img {
+  width: 18px !important;
+  height: 18px !important;
+}
+.wallet-adapter-modal-wrapper {
+  background: #fff !important;
+  color: var(--color-ink) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.35) !important;
+}
+.wallet-adapter-modal-title {
+  color: var(--color-ink) !important;
+}
+.wallet-adapter-modal-list .wallet-adapter-button {
+  background: transparent !important;
+  color: var(--color-ink) !important;
+  border-radius: 12px !important;
+}
+.wallet-adapter-modal-list .wallet-adapter-button:hover {
+  background: #f4f4f5 !important;
+}
+.wallet-adapter-modal-button-close {
+  background: #f4f4f5 !important;
+}
+.wallet-adapter-modal-button-close svg {
+  fill: var(--color-muted) !important;
+}
+.wallet-adapter-modal-list-more {
+  color: var(--color-ink) !important;
+}
+.wallet-adapter-modal-list-more svg {
+  fill: var(--color-ink) !important;
+}
+.wallet-adapter-modal-overlay {
+  background: rgba(10, 10, 10, 0.35) !important;
+  backdrop-filter: blur(6px);
+}
+.wallet-adapter-dropdown-list {
+  background: #fff !important;
+  color: var(--color-ink) !important;
+  border: 1px solid var(--color-line);
+  border-radius: 14px !important;
+}
+.wallet-adapter-dropdown-list-item:not([disabled]):hover {
+  background: #f4f4f5 !important;
+}
