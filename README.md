@@ -135,6 +135,12 @@ cp .env.example .env
 npm run dev                   # http://localhost:5173
 ```
 
+Once everything is configured, one command starts the backend, the frontend and a public HTTPS tunnel (updates the GitHub webhook automatically):
+
+```bash
+npm run dev:public   # or: npm run dev  (localhost only)
+```
+
 The program is already deployed on devnet: [`8GYmgRJ9iRNE9kmBf5HkAfMu23Fdh6ES8XvXMbNdYvJw`](https://explorer.solana.com/address/8GYmgRJ9iRNE9kmBf5HkAfMu23Fdh6ES8XvXMbNdYvJw?cluster=devnet).
 
 For the full setup (GitHub App fields, devnet test USDC, tunnels, deployment, common errors), see [docs/setup.ru.md](docs/setup.ru.md).

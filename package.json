@@ -2,6 +2,8 @@
   "name": "proof-of-build",
   "private": true,
   "scripts": {
+    "dev": "bash scripts/dev.sh",
+    "dev:public": "bash scripts/dev.sh --public",
     "test": "anchor build && npx ts-mocha -p ./tsconfig.json -t 1000000 'tests/**/*.ts'"
   },
   "dependencies": {

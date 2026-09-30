@@ -8,3 +8,4 @@ dist/
 oracle.json
 *-keypair.json
 .DS_Store
+.dev-logs/

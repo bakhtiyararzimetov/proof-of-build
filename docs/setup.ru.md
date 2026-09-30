@@ -4,11 +4,34 @@
 
 ```
 programs/proof_of_build/   Anchor-программа (Rust)
-tests/                     тесты контракта (bankrun, 36 шт., включая атаки)
+tests/                     тесты контракта (bankrun, 53 шт., включая атаки)
 idl/                       IDL + TS-типы + README для фронтенда
-backend/                    Fastify + Prisma + PostgreSQL (оракул, GitHub, письма, REST API)
-frontend/                       Vite + React + TypeScript + Tailwind (фронтенд)
+backend/                   Fastify + Prisma + PostgreSQL (оракул, GitHub, письма, REST API)
+frontend/                  Vite + React + TypeScript + Tailwind (фронтенд)
+scripts/dev.sh             запуск всего одной командой
 ```
+
+## Быстрый запуск (когда всё уже настроено)
+
+Одна команда из корня проекта, терминал держать открытым, `Ctrl+C` — остановить всё:
+
+```bash
+cd ~/proof-of-build
+npm run dev:public   # сервер + сайт + публичный HTTPS-адрес (телефон, вебхуки, огоньки)
+npm run dev          # только локально: http://localhost:5173 (вход работает, огоньков нет)
+```
+
+`dev:public` сам:
+1. открывает туннель cloudflared и получает адрес `https://<имя>.trycloudflare.com`;
+2. прописывает его в `backend/.env` (`PUBLIC_URL`, `FRONTEND_URL`);
+3. меняет адрес вебхука в GitHub App через API (`backend/scripts/set-webhook-url.mjs`);
+4. запускает сервер и сайт и печатает адрес.
+
+Одно действие руками при **каждом новом адресе**: GitHub App → Redirect URI → добавить
+`<адрес>/api/auth/github/callback` (скрипт печатает готовую строку; GitHub не даёт менять это через API).
+Логи — в `.dev-logs/`.
+
+Первичная настройка (база, GitHub App, ключи, деплой контракта) — ниже, по шагам.
 
 ## 1. Контракт
 
@@ -83,7 +106,7 @@ cd backend
 npm install
 npx prisma migrate deploy   # создать таблицы (один раз и после обновлений схемы)
 npm run dev                 # http://localhost:3000/health, держать терминал открытым
-npm test                    # 27 тестов (без БД и сети)
+npm test                    # 41 тест (без БД и сети)
 ```
 
 ### Демо-хакатон
