@@ -19,7 +19,7 @@
 
 | Name | Role | Contact |
 |------|------|---------|
-| Bakhtiyar | Founder & Full-stack Engineer | [GitHub](https://github.com/Bakhtiyar121) · [Telegram](#) · [X](#) |
+| Bakhtiyar | Founder & Full-stack Engineer | [GitHub](https://github.com/bakhtiyararzimetov) · [Telegram](#) · [X](#) |
 
 ---
 
