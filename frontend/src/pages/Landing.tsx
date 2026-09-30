@@ -45,7 +45,7 @@ export default function Landing() {
             <InstallApp className="mt-4 md:hidden" />
           </div>
           <div className="relative mx-auto w-full max-w-sm lg:max-w-md">
-            <GlassCube className="float w-full drop-shadow-[0_40px_60px_rgba(0,0,0,0.25)]" />
+            <GlassCube className="w-full" />
           </div>
         </div>
 

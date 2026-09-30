@@ -90,61 +90,19 @@ export function CoverArt({ seed, className = "", dark }: { seed: string; classNa
 }
 
 /** Hero: a tall frosted-glass cube with chrome edges. */
+/** Hero: a real 3D glass/chrome cube (CSS 3D) that slowly spins. Styles in index.css (.cube3d-*). */
 export function GlassCube({ className = "" }: { className?: string }) {
+  const faces = ["front light", "right dark", "back light", "left dark", "top", "bottom"];
   return (
-    <svg viewBox="0 0 420 460" className={className} aria-hidden>
-      <defs>
-        <linearGradient id="gc-left" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
-          <stop offset="55%" stopColor="#d9d9de" stopOpacity="0.75" />
-          <stop offset="100%" stopColor="#9a9aa0" stopOpacity="0.8" />
-        </linearGradient>
-        <linearGradient id="gc-right" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#2c2c2e" />
-          <stop offset="45%" stopColor="#0a0a0a" />
-          <stop offset="75%" stopColor="#5a5a5e" />
-          <stop offset="100%" stopColor="#1c1c1e" />
-        </linearGradient>
-        <linearGradient id="gc-top" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#ffffff" />
-          <stop offset="100%" stopColor="#c9c9ce" />
-        </linearGradient>
-        <linearGradient id="gc-refr" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
-          <stop offset="50%" stopColor="#ffffff" stopOpacity="0.9" />
-          <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
-        </linearGradient>
-        <radialGradient id="gc-shadow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#000" stopOpacity="0.28" />
-          <stop offset="100%" stopColor="#000" stopOpacity="0" />
-        </radialGradient>
-        <filter id="gc-blur">
-          <feGaussianBlur stdDeviation="2.5" />
-        </filter>
-      </defs>
-
-      <ellipse cx="215" cy="420" rx="170" ry="26" fill="url(#gc-shadow)" />
-
-      {/* faces of a cube standing on a corner */}
-      <path d="M 215 40 L 360 115 L 360 330 L 215 405 Z" fill="url(#gc-right)" />
-      <path d="M 215 40 L 70 115 L 70 330 L 215 405 Z" fill="url(#gc-left)" />
-      <path d="M 215 40 L 360 115 L 215 190 L 70 115 Z" fill="url(#gc-top)" opacity="0.9" />
-
-      {/* inner glass structure */}
-      <path d="M 215 190 L 215 405" stroke="#ffffff" strokeOpacity="0.8" strokeWidth="1.5" />
-      <path d="M 70 115 L 215 190 L 360 115" fill="none" stroke="#ffffff" strokeOpacity="0.9" strokeWidth="1.5" />
-      <path d="M 110 150 L 110 350" stroke="url(#gc-refr)" strokeWidth="10" filter="url(#gc-blur)" />
-      <path d="M 300 160 L 300 360" stroke="url(#gc-refr)" strokeWidth="6" opacity="0.5" filter="url(#gc-blur)" />
-      <path d="M 250 90 L 330 130" stroke="#fff" strokeWidth="3" opacity="0.7" filter="url(#gc-blur)" />
-
-      {/* chrome edges */}
-      <path
-        d="M 215 40 L 360 115 L 360 330 L 215 405 L 70 330 L 70 115 Z"
-        fill="none"
-        stroke="#ffffff"
-        strokeWidth="2"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <div className={`cube3d-scene ${className}`} aria-hidden>
+      <div className="cube3d-float">
+        <div className="cube3d">
+          {faces.map((f) => (
+            <div key={f} className={`cube3d-face ${f}`} />
+          ))}
+        </div>
+      </div>
+      <div className="cube3d-shadow" />
+    </div>
   );
 }
