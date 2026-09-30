@@ -2,7 +2,7 @@
 # Secrets are not stored here: paste them in the dashboard (Environment → "Add from .env").
 services:
   - type: web
-    name: proof-of-build-api
+    name: proof-of-build
     runtime: node
     plan: free
     region: singapore
