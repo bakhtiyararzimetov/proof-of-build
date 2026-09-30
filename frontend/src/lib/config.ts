@@ -1,9 +1,11 @@
-export const API_URL = (import.meta.env.VITE_API_URL as string | undefined) ?? "http://localhost:3000";
+// Same-origin by default: Vite (dev) and Vercel (prod, vercel.json) proxy /api to the backend.
+export const API_URL = (import.meta.env.VITE_API_URL as string | undefined) ?? "/api";
 export const RPC_URL =
   (import.meta.env.VITE_RPC_URL as string | undefined) ?? "https://api.devnet.solana.com";
 export const DEFAULT_MINT =
   (import.meta.env.VITE_DEFAULT_MINT as string | undefined) ??
-  "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU";
+  // Test USDC on devnet created by `npm run devnet:setup` (6 decimals).
+  "HncFPHpTBYv4ipiG78HhLZGmGVkZYPxQdsEi17rbVt44";
 
 const cluster = RPC_URL.includes("devnet") ? "devnet" : RPC_URL.includes("testnet") ? "testnet" : null;
 const suffix = cluster ? `?cluster=${cluster}` : "";
