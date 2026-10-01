@@ -155,7 +155,7 @@ For the full setup (GitHub App fields, devnet test USDC, tunnels, deployment, co
 - [x] GitHub App oracle with fraud flags and webhook redelivery
 - [x] Web app: organizer, team dashboard, admin panel, certificates
 - [x] Devnet deployment
-- [ ] Public deployment (Vercel + Render/Railway)
+- [x] Public deployment (Vercel + Render)
 - [ ] Security audit and mainnet launch
 - [ ] Multiple oracles / threshold signing
 - [ ] Judge voting on-chain
@@ -166,7 +166,7 @@ Full roadmap: [docs/roadmap.md](docs/roadmap.md)
 
 ## Resources
 
-- [Project Presentation](https://docs.google.com/presentation/d/18dYk-l-WWF9uQ8sb-4vDjPJOAXKz7vzw0wWbazuVXTw/edit)
+- [Project Presentation](https://docs.google.com/presentation/d/1KOqCvjjbxtoCuD-6d1P-vN98sUJhsUyMpap3VGYfYlY/edit)
 - [Video Demo](#)
 - [Live Application](https://proofofbuild.vercel.app)
 - [Program on Solana Explorer](https://explorer.solana.com/address/8GYmgRJ9iRNE9kmBf5HkAfMu23Fdh6ES8XvXMbNdYvJw?cluster=devnet)
