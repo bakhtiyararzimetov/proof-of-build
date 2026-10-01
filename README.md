@@ -20,6 +20,8 @@
 | Name | Role | Contact |
 |------|------|---------|
 | Bakhtiyar Arzimetov | Founder & Full-stack Engineer | [GitHub](https://github.com/bakhtiyararzimetov) · [Telegram](#) · [X](#) |
+| Raikhan | [Role] | [GitHub](#) · [Telegram](#) |
+| Erkhan | [Role] | [GitHub](#) · [Telegram](#) |
 
 ---
 
