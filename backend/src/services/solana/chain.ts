@@ -1,4 +1,11 @@
-import { AnchorProvider, BN, Program, type Idl } from "@coral-xyz/anchor";
+import anchor from "@coral-xyz/anchor";
+import type { BN as AnchorBN, Idl, Program as AnchorProgram } from "@coral-xyz/anchor";
+
+// Anchor ships CommonJS only, and Node 22's ESM loader can't see its named exports
+// ("Named export 'BN' not found"), so the values come from the default export.
+const { AnchorProvider, BN, Program } = anchor;
+type BN = AnchorBN;
+type Program<T extends Idl> = AnchorProgram<T>;
 import {
   Connection,
   Keypair,
