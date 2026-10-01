@@ -37,18 +37,23 @@ export default function CreateHackathon() {
     deposit: "10",
     prize: "1000",
     mint: DEFAULT_MINT,
+    // Demo mode: starts now and lasts N minutes, to show join → commit → fire → certificate
+    // in one sitting. The contract counts it as 1 day.
+    demo: false,
+    minutes: "30",
   });
   const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setF((v) => ({ ...v, [k]: e.target.value }));
 
   const days = Number(f.days);
-  const fires = Number(f.requiredFires);
+  const fires = f.demo ? 1 : Number(f.requiredFires);
   const regHours = Number(f.regHours);
+  const minutes = Number(f.minutes);
   const invalid =
     !f.title.trim() ||
-    !(days >= 1 && days <= 64) ||
-    !(fires >= 1 && fires <= days) ||
-    !(regHours >= 0 && regHours <= days * 24) ||
+    (f.demo
+      ? !(minutes >= 10 && minutes <= 24 * 60)
+      : !(days >= 1 && days <= 64) || !(fires >= 1 && fires <= days) || !(regHours >= 0 && regHours <= days * 24)) ||
     !(Number(f.prize) > 0) ||
     !(Number(f.deposit) >= 0);
 
@@ -57,10 +62,11 @@ export default function CreateHackathon() {
     try {
       setBusy("Preparing…");
       const { oracle } = await api.health();
-      const startTs = Math.floor(new Date(f.start).getTime() / 1000);
-      const endTs = startTs + days * 86_400;
-      // Registration must still be open when the transaction lands.
-      const registrationEndTs = Math.max(startTs + regHours * 3_600, Math.floor(Date.now() / 1000) + 600);
+      const now = Math.floor(Date.now() / 1000);
+      const startTs = f.demo ? now : Math.floor(new Date(f.start).getTime() / 1000);
+      const endTs = f.demo ? now + minutes * 60 : startTs + days * 86_400;
+      // Registration must still be open when the transaction lands; in demo mode it stays open to the end.
+      const registrationEndTs = f.demo ? endTs : Math.max(startTs + regHours * 3_600, now + 600);
       setBusy("Confirm in your wallet…");
       const { hackathon, tx } = await createHackathon(program, {
         organizer: publicKey,
@@ -103,6 +109,31 @@ export default function CreateHackathon() {
             <label className="label" htmlFor="desc">About</label>
             <textarea id="desc" className="input min-h-28" value={f.description} onChange={set("description")} placeholder="Track, goals, judging…" />
           </div>
+          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-line p-3.5">
+            <input
+              type="checkbox"
+              className="mt-0.5 size-4 accent-[var(--color-brand)]"
+              checked={f.demo}
+              onChange={(e) => setF((v) => ({ ...v, demo: e.target.checked }))}
+            />
+            <span className="text-sm">
+              <span className="font-semibold">Demo mode</span>
+              <span className="block text-xs text-muted">
+                Starts now and ends in a few minutes, 1 fire required, registration open until the end. Shows the full
+                flow (join → commit → fire → certificate) in one go.
+              </span>
+            </span>
+          </label>
+          {f.demo ? (
+          <div>
+            <label className="label" htmlFor="minutes">Duration, minutes</label>
+            <input id="minutes" type="number" min={10} max={1440} className="input" value={f.minutes} onChange={set("minutes")} />
+            <p className="mt-1.5 text-xs text-muted">
+              Certificates open right after the end. Payouts (finalize, claim) open 3 hours after the end.
+            </p>
+          </div>
+          ) : (
+          <>
           <div className="grid gap-5 sm:grid-cols-3">
             <div>
               <label className="label" htmlFor="start">Start</label>
@@ -124,6 +155,8 @@ export default function CreateHackathon() {
               Nobody can join after that, so nobody can slip into a winning team at the last moment.
             </p>
           </div>
+          </>
+          )}
           <div className="grid gap-5 sm:grid-cols-2">
             <div>
               <label className="label" htmlFor="prize">Prize, USDC</label>
