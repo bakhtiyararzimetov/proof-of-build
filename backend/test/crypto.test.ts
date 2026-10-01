@@ -65,8 +65,8 @@ describe("letter", () => {
   it("the email contains the exact hashed text followed by the verify link", () => {
     const text = buildLetter(input);
     const hash = letterHash(text);
-    const email = letterEmail(text, hash, "https://api");
+    const email = letterEmail(text, hash, "https://site.example");
     expect(email.startsWith(text + "\n")).toBe(true);
-    expect(email).toContain(`https://api/verify/${hash}`);
+    expect(email).toContain(`https://site.example/verify/${hash}`);
   });
 });

@@ -82,7 +82,7 @@ export default async function attestationRoutes(app: FastifyInstance, { deps }: 
         const emailId = await mailer.send({
           to: p.user.email,
           subject: `Proof of Build: подтверждение участия — ${p.hackathon.title}`,
-          text: letterEmail(text, hash, config.PUBLIC_URL),
+          text: letterEmail(text, hash, config.FRONTEND_URL),
         });
         emailSent = emailId !== null;
         if (emailId) await prisma.attestation.update({ where: { id: saved.id }, data: { emailId } });

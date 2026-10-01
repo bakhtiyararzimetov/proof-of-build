@@ -36,12 +36,13 @@ export function buildLetter(p: LetterInput): string {
 
 export const letterHash = (body: string): string => sha256Hex(body);
 
-export function letterEmail(body: string, hash: string, publicUrl: string): string {
+/** siteUrl is the frontend (FRONTEND_URL): the link opens its /verify page, not the raw API. */
+export function letterEmail(body: string, hash: string, siteUrl: string): string {
   return [
     body,
     "",
     "---",
     "SHA-256 этого текста (без строк ниже разделителя) записан в блокчейн Solana.",
-    `Проверить подлинность: ${publicUrl}/verify/${hash}`,
+    `Проверить подлинность: ${siteUrl}/verify/${hash}`,
   ].join("\n");
 }
