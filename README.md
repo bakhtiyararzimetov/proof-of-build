@@ -21,7 +21,7 @@
 |------|------|---------|
 | Bakhtiyar Arzimetov | Founder & Full-stack Engineer | [GitHub](https://github.com/bakhtiyararzimetov) · [Telegram](https://t.me/Bakhtiyar124) |
 | Raikhan | Product & Pitch | [GitHub](https://github.com/raiko-cyber) · [Telegram](https://t.me/Qayranbek0va) |
-| Erkhan | Frontend Developer | [GitHub](#) · [Telegram](#) |
+| Erkhan | Frontend Developer | [GitHub](https://github.com/erkhanrakhatuly-source) |
 
 ---
 
