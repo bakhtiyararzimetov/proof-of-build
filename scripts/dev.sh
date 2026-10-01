@@ -2,7 +2,10 @@
 # Starts the whole app with one command.
 #
 #   ./scripts/dev.sh           local only: http://localhost:5173 (sign-in works, commits do NOT earn fires)
-#   ./scripts/dev.sh --public  + public HTTPS address (phone, GitHub webhooks, fires). Needs cloudflared.
+#   ./scripts/dev.sh --public  + temporary public HTTPS address (phone testing). Needs cloudflared.
+#   ./scripts/dev.sh --public --webhook   also points the GitHub App webhook at this laptop
+#                              (fires then come here, NOT to the hosted server — switch back afterwards:
+#                               node backend/scripts/set-webhook-url.mjs https://proof-of-build.onrender.com/webhooks/github)
 #
 # Ctrl+C stops everything. Logs: .dev-logs/
 set -euo pipefail
@@ -11,7 +14,11 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 LOGS="$ROOT/.dev-logs"
 mkdir -p "$LOGS"
 PUBLIC=false
-[[ "${1:-}" == "--public" ]] && PUBLIC=true
+WEBHOOK=false
+for a in "$@"; do
+  [[ "$a" == "--public" ]] && PUBLIC=true
+  [[ "$a" == "--webhook" ]] && WEBHOOK=true
+done
 
 pids=()
 cleanup() {
@@ -55,7 +62,9 @@ if $PUBLIC; then
   [[ -n "$URL" ]] || { echo "Tunnel did not start, see $LOGS/tunnel.log"; exit 1; }
   set_env "$ROOT/backend/.env" PUBLIC_URL "$URL/api"
   set_env "$ROOT/backend/.env" FRONTEND_URL "$URL"
-  (cd "$ROOT/backend" && node scripts/set-webhook-url.mjs "$URL/api/webhooks/github") || echo "! Could not update the webhook, set it in the GitHub App by hand."
+  if $WEBHOOK; then
+    (cd "$ROOT/backend" && node scripts/set-webhook-url.mjs "$URL/api/webhooks/github") || echo "! Could not update the webhook, set it in the GitHub App by hand."
+  fi
 else
   URL="http://localhost:5173"
   set_env "$ROOT/backend/.env" PUBLIC_URL "http://localhost:3000"

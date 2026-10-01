@@ -24,8 +24,11 @@ npm run dev          # только локально: http://localhost:5173 (в�
 `dev:public` сам:
 1. открывает туннель cloudflared и получает адрес `https://<имя>.trycloudflare.com`;
 2. прописывает его в `backend/.env` (`PUBLIC_URL`, `FRONTEND_URL`);
-3. меняет адрес вебхука в GitHub App через API (`backend/scripts/set-webhook-url.mjs`);
-4. запускает сервер и сайт и печатает адрес.
+3. запускает сервер и сайт и печатает адрес.
+
+Вебхук GitHub App при этом **не трогается**: он смотрит на постоянный сервер Render. Чтобы огоньки шли на ноутбук
+(отладка), добавь `--webhook`: `bash scripts/dev.sh --public --webhook`. Потом верни обратно:
+`cd backend && node scripts/set-webhook-url.mjs https://proof-of-build.onrender.com/webhooks/github`.
 
 Одно действие руками при **каждом новом адресе**: GitHub App → Redirect URI → добавить
 `<адрес>/api/auth/github/callback` (скрипт печатает готовую строку; GitHub не даёт менять это через API).
