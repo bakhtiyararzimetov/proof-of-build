@@ -166,7 +166,7 @@ Full roadmap: [docs/roadmap.md](docs/roadmap.md)
 
 ## Resources
 
-- [Project Presentation](#)
+- [Project Presentation](https://docs.google.com/presentation/d/18dYk-l-WWF9uQ8sb-4vDjPJOAXKz7vzw0wWbazuVXTw/edit)
 - [Video Demo](#)
 - [Live Application](https://proofofbuild.vercel.app)
 - [Program on Solana Explorer](https://explorer.solana.com/address/8GYmgRJ9iRNE9kmBf5HkAfMu23Fdh6ES8XvXMbNdYvJw?cluster=devnet)
