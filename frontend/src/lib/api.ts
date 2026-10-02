@@ -253,6 +253,6 @@ export const api = {
   issueAttestation: (participant: string) =>
     request<AttestationResult>("POST", "/attestations", { participant }),
   verify: (hash: string) => request<VerifyResult>("GET", `/verify/${enc(hash)}`),
-  faucet: (hackathon: string) =>
-    request<{ amount: string; tx: string; explorer: string }>("POST", "/faucet", { hackathon }),
+  faucet: (target: { hackathon: string } | { mint: string }) =>
+    request<{ amount: string; tx: string; explorer: string }>("POST", "/faucet", target),
 };

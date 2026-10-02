@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
-import { Lock, Rocket, ShieldCheck, Wallet } from "lucide-react";
+import { getAssociatedTokenAddressSync } from "@solana/spl-token";
+import { Coins, Lock, Rocket, ShieldCheck, Wallet } from "lucide-react";
 import { api } from "../lib/api";
 import { useAuth } from "../lib/auth";
 import { DEFAULT_MINT } from "../lib/config";
-import { errMessage, toBaseUnits } from "../lib/format";
+import { errMessage, toBaseUnits, usdc } from "../lib/format";
 import { createHackathon, useProgram } from "../lib/program";
 import { Button, Card } from "../components/ui";
 import { AccountSetup, useReady } from "../components/AccountSetup";
@@ -23,10 +24,12 @@ export default function CreateHackathon() {
   const { me } = useAuth();
   const ready = useReady();
   const { publicKey } = useWallet();
+  const { connection } = useConnection();
   const program = useProgram();
   const toast = useToast();
   const navigate = useNavigate();
   const [busy, setBusy] = useState<string | null>(null);
+  const [fauceting, setFauceting] = useState(false);
   const [f, setF] = useState({
     title: "",
     description: "",
@@ -61,6 +64,15 @@ export default function CreateHackathon() {
     if (!publicKey) return;
     try {
       setBusy("Preparing…");
+      // Without the prize in the wallet the program only says "account not initialized", so explain it first.
+      const prize = toBaseUnits(f.prize);
+      const have = await connection
+        .getTokenAccountBalance(getAssociatedTokenAddressSync(new PublicKey(f.mint.trim()), publicKey))
+        .then((r) => BigInt(r.value.amount))
+        .catch(() => 0n);
+      if (have < prize) {
+        throw new Error(`The prize is ${usdc(prize)} but the wallet holds ${usdc(have)} of this token. Press "Get test USDC" or lower the prize.`);
+      }
       const { oracle } = await api.health();
       const now = Math.floor(Date.now() / 1000);
       const startTs = f.demo ? now : Math.floor(new Date(f.start).getTime() / 1000);
@@ -172,6 +184,28 @@ export default function CreateHackathon() {
             <label className="label" htmlFor="mint">Token mint</label>
             <input id="mint" className="input font-mono text-xs" value={f.mint} onChange={set("mint")} />
             <p className="mt-1.5 text-xs text-muted">Test USDC on devnet by default. Your wallet must hold at least the prize amount.</p>
+            {f.mint.trim() === DEFAULT_MINT && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-2"
+                loading={fauceting}
+                icon={<Coins className="size-4" />}
+                onClick={async () => {
+                  setFauceting(true);
+                  try {
+                    const r = await api.faucet({ mint: DEFAULT_MINT });
+                    toast.ok(`Received ${usdc(r.amount)} test USDC`, { tx: r.tx });
+                  } catch (e) {
+                    toast.error("Could not get test USDC", errMessage(e));
+                  } finally {
+                    setFauceting(false);
+                  }
+                }}
+              >
+                Get test USDC
+              </Button>
+            )}
           </div>
           <Button size="lg" disabled={invalid} loading={!!busy} onClick={submit} icon={<Rocket className="size-4" />}>
             {busy ?? "Create Hackathon"}

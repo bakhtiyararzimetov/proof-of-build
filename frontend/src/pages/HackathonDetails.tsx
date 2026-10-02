@@ -67,7 +67,7 @@ function DepositCard({ h }: { h: HackathonDetail }) {
         onClick={async () => {
           setBusy(true);
           try {
-            const r = await api.faucet(h.id);
+            const r = await api.faucet({ hackathon: h.id });
             toast.ok(`Received ${usdc(r.amount)} test USDC`, { tx: r.tx });
           } catch (e) {
             toast.error("Could not get test USDC", errMessage(e));
