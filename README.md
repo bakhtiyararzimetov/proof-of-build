@@ -7,7 +7,7 @@
 
 > Fair hackathons on Solana: prizes are locked in a smart contract, every day of real work becomes an on-chain "fire" from verified GitHub commits, and only people who actually built get paid.
 
-[Live Demo](https://proofofbuild.vercel.app) · [Video Walkthrough](#) · [Docs](docs/) · [Colosseum Submission](https://colosseum.com/arena/projects/proof-of-build)
+[Live Demo](https://proofofbuild.vercel.app) · [Demo Video](https://youtu.be/iLtubAMUNDs) · [Pitch Video](https://youtu.be/NQhSuXj6QoE) · [Docs](docs/) · [Colosseum Submission](https://colosseum.com/arena/projects/proof-of-build)
 
 ---
 
@@ -167,7 +167,8 @@ Full roadmap: [docs/roadmap.md](docs/roadmap.md)
 ## Resources
 
 - [Project Presentation](https://docs.google.com/presentation/d/1KOqCvjjbxtoCuD-6d1P-vN98sUJhsUyMpap3VGYfYlY/edit)
-- [Video Demo](#)
+- [Demo Video (3 min)](https://youtu.be/iLtubAMUNDs)
+- [Pitch Video (2 min)](https://youtu.be/NQhSuXj6QoE)
 - [Live Application](https://proofofbuild.vercel.app)
 - [Program on Solana Explorer](https://explorer.solana.com/address/8GYmgRJ9iRNE9kmBf5HkAfMu23Fdh6ES8XvXMbNdYvJw?cluster=devnet)
 - [API Reference](docs/api.md)
