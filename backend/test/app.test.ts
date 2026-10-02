@@ -67,6 +67,7 @@ describe("HTTP", () => {
   it("protected routes require a JWT", async () => {
     expect((await app.inject({ method: "GET", url: "/me" })).statusCode).toBe(401);
     expect((await app.inject({ method: "POST", url: "/attestations", payload: {} })).statusCode).toBe(401);
+    expect((await app.inject({ method: "POST", url: "/faucet", payload: {} })).statusCode).toBe(401);
   });
 
   it("verify validates the hash format and reports unknown hashes", async () => {

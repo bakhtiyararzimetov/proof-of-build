@@ -34,7 +34,7 @@ export default function CreateHackathon() {
     days: "5",
     regHours: "24",
     requiredFires: "3",
-    deposit: "10",
+    deposit: "0",
     prize: "1000",
     mint: DEFAULT_MINT,
     // Demo mode: starts now and lasts N minutes, to show join → commit → fire → certificate

@@ -10,6 +10,7 @@ import hackathonRoutes from "./routes/hackathons.js";
 import teamRoutes from "./routes/teams.js";
 import webhookRoutes from "./routes/webhooks.js";
 import attestationRoutes from "./routes/attestations.js";
+import faucetRoutes from "./routes/faucet.js";
 
 declare module "fastify" {
   interface FastifyRequest {
@@ -50,5 +51,6 @@ export async function buildApp(deps: Deps, opts: FastifyServerOptions = {}) {
   await app.register(teamRoutes, { deps });
   await app.register(webhookRoutes, { deps });
   await app.register(attestationRoutes, { deps });
+  await app.register(faucetRoutes, { deps });
   return app;
 }

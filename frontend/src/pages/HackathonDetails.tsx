@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { ArrowLeft, CalendarDays, Flame, Shield, Trophy, Users, UserPlus, Wallet } from "lucide-react";
+import { ArrowLeft, CalendarDays, Coins, Flame, Shield, Trophy, Users, UserPlus, Wallet } from "lucide-react";
 import { api, type HackathonDetail, type ParticipantsResponse } from "../lib/api";
 import { useAuth } from "../lib/auth";
 import { useAsync } from "../lib/useAsync";
@@ -39,6 +39,46 @@ function Rules({ h, short }: { h: HackathonDetail; short?: boolean }) {
         </li>
       ))}
     </ol>
+  );
+}
+
+/** Explains the deposit and hands out free devnet test USDC to pay it. */
+function DepositCard({ h }: { h: HackathonDetail }) {
+  const toast = useToast();
+  const [busy, setBusy] = useState(false);
+  return (
+    <div className="flex flex-col gap-2 rounded-xl bg-zinc-50 p-3 text-xs text-muted">
+      <p className="flex items-center gap-2 font-semibold text-ink">
+        <Wallet className="size-4 shrink-0" />
+        {usdc(h.depositAmount)} USDC deposit
+      </p>
+      <p>
+        Why: it is locked in the contract and returned when you reach {h.requiredFires} fire
+        {h.requiredFires === 1 ? "" : "s"}; otherwise it goes to the prize pool. It keeps people from joining and doing
+        nothing.
+      </p>
+      <p>This hackathon runs on devnet with test USDC: it is free and has no real value.</p>
+      <Button
+        variant="outline"
+        size="sm"
+        className="self-start"
+        loading={busy}
+        icon={<Coins className="size-4" />}
+        onClick={async () => {
+          setBusy(true);
+          try {
+            const r = await api.faucet(h.id);
+            toast.ok(`Received ${usdc(r.amount)} test USDC`, { tx: r.tx });
+          } catch (e) {
+            toast.error("Could not get test USDC", errMessage(e));
+          } finally {
+            setBusy(false);
+          }
+        }}
+      >
+        Get test USDC
+      </Button>
+    </div>
   );
 }
 
@@ -101,7 +141,7 @@ function JoinPanel({ h, onJoined }: { h: HackathonDetail; onJoined: () => Promis
             .then((r) => BigInt(r.value.amount))
             .catch(() => 0n);
           if (bal < BigInt(h.depositAmount)) {
-            throw new Error(`The deposit needs ${usdc(h.depositAmount)} test USDC, the wallet has ${usdc(bal)}. Ask the organizer for test USDC.`);
+            throw new Error(`The deposit needs ${usdc(h.depositAmount)} test USDC, the wallet has ${usdc(bal)}. Press "Get test USDC" above.`);
           }
         }
       }
@@ -161,12 +201,7 @@ function JoinPanel({ h, onJoined }: { h: HackathonDetail; onJoined: () => Promis
           />
         </div>
       )}
-      {deposit && (
-        <p className="flex items-center gap-2 rounded-xl bg-zinc-50 p-3 text-xs text-muted">
-          <Wallet className="size-4 shrink-0 text-ink" />
-          {usdc(h.depositAmount)} USDC will be locked from your wallet as a deposit.
-        </p>
-      )}
+      {deposit && <DepositCard h={h} />}
       <Button
         size="lg"
         loading={busy}

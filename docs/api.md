@@ -26,6 +26,7 @@ Base URL: `http://localhost:3000` locally. Authenticated routes need `Authorizat
 | POST | `/webhooks/github` | HMAC signature | GitHub push events |
 | POST | `/attestations` | JWT, participant or organizer | Issues a certificate after the end (one per participant) |
 | GET | `/verify/:hash` | public | Verifies a certificate hash |
+| POST | `/faucet` | JWT + wallet | Sends 1000 devnet test USDC for a hackathon whose mint the oracle controls |
 
 ## Examples
 

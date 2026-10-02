@@ -13,8 +13,15 @@ import {
   SystemProgram,
   Transaction,
   VersionedTransaction,
+  sendAndConfirmTransaction,
 } from "@solana/web3.js";
-import { TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync } from "@solana/spl-token";
+import {
+  TOKEN_PROGRAM_ID,
+  createAssociatedTokenAccountIdempotentInstruction,
+  createMintToInstruction,
+  getAssociatedTokenAddressSync,
+  getMint,
+} from "@solana/spl-token";
 import bs58 from "bs58";
 import idl from "../../idl/proof_of_build.json" with { type: "json" };
 import { commitHashBytes } from "../ids.js";
@@ -102,6 +109,10 @@ export interface Chain {
     wallet: PublicKey;
     githubIdHash: Buffer;
   }): Promise<string>;
+  /** Test-token faucet: only works for a mint whose mint authority is the oracle. */
+  canMint(mint: PublicKey): Promise<boolean>;
+  tokenBalance(mint: PublicKey, wallet: PublicKey): Promise<bigint>;
+  mintTestTokens(mint: PublicKey, wallet: PublicKey, amount: bigint): Promise<string>;
 }
 
 export function parseSecretKey(value: string): Keypair {
@@ -288,5 +299,26 @@ export class SolanaChain implements Chain {
       .accountsPartial({ ...accounts, team: p.team })
       .instruction();
     return this.partiallySigned(p.wallet, ix);
+  }
+
+  async canMint(mint: PublicKey) {
+    const info = await getMint(this.connection, mint).catch(() => null);
+    return !!info?.mintAuthority?.equals(this.oracle.publicKey);
+  }
+
+  async tokenBalance(mint: PublicKey, wallet: PublicKey) {
+    return this.connection
+      .getTokenAccountBalance(getAssociatedTokenAddressSync(mint, wallet))
+      .then((r) => BigInt(r.value.amount))
+      .catch(() => 0n);
+  }
+
+  async mintTestTokens(mint: PublicKey, wallet: PublicKey, amount: bigint) {
+    const ata = getAssociatedTokenAddressSync(mint, wallet);
+    const tx = new Transaction().add(
+      createAssociatedTokenAccountIdempotentInstruction(this.oracle.publicKey, ata, wallet, mint),
+      createMintToInstruction(mint, ata, this.oracle.publicKey, amount),
+    );
+    return sendAndConfirmTransaction(this.connection, tx, [this.oracle], { commitment: "confirmed" });
   }
 }
