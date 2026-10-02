@@ -217,7 +217,23 @@ export async function signAndSendServerTx(
 ) {
   const tx = Transaction.from(Uint8Array.from(atob(base64), (c) => c.charCodeAt(0)));
   const signed = await signTransaction(tx);
-  const signature = await connection.sendRawTransaction(signed.serialize());
+  const raw = signed.serialize();
+  // The public devnet RPC is load-balanced: the node that simulates may not have seen the
+  // server's blockhash yet ("Blockhash not found"). The same signed bytes stay valid ~1 min, so retry.
+  let signature = "";
+  for (let attempt = 1; ; attempt++) {
+    try {
+      signature = await connection.sendRawTransaction(raw, { preflightCommitment: "confirmed", maxRetries: 5 });
+      break;
+    } catch (e) {
+      const blockhashMissing = String((e as Error)?.message ?? e).includes("Blockhash not found");
+      if (!blockhashMissing) throw e;
+      if (attempt >= 5) {
+        throw new Error("The transaction expired before it reached the network. Please press the button again and sign right away.");
+      }
+      await new Promise((r) => setTimeout(r, 1500));
+    }
+  }
   const latest = await connection.getLatestBlockhash("confirmed");
   const res = await connection.confirmTransaction(
     {
