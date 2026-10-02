@@ -16,7 +16,7 @@ export default async function attestationRoutes(app: FastifyInstance, { deps }: 
     letter: a.letterBody,
     tx: a.txSignature ?? "",
     explorer: a.txSignature ? explorerTx(config.RPC_URL, a.txSignature) : "",
-    verifyUrl: `${config.PUBLIC_URL}/verify/${a.letterHash}`,
+    verifyUrl: `${config.FRONTEND_URL}/verify/${a.letterHash}`,
     emailSent,
   });
 
@@ -81,7 +81,7 @@ export default async function attestationRoutes(app: FastifyInstance, { deps }: 
       try {
         const emailId = await mailer.send({
           to: p.user.email,
-          subject: `Proof of Build: подтверждение участия — ${p.hackathon.title}`,
+          subject: `Proof of Build: certificate of participation — ${p.hackathon.title}`,
           text: letterEmail(text, hash, config.FRONTEND_URL),
         });
         emailSent = emailId !== null;

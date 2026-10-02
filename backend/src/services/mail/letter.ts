@@ -21,16 +21,16 @@ const fmt = (d: Date) => d.toISOString().slice(0, 10);
 export function buildLetter(p: LetterInput): string {
   const nonce = p.nonce ?? randomBytes(16).toString("hex");
   return [
-    "PROOF OF BUILD — ПОДТВЕРЖДЕНИЕ УЧАСТИЯ",
+    "PROOF OF BUILD — CERTIFICATE OF PARTICIPATION",
     "",
-    `Настоящим подтверждается, что участник GitHub @${p.githubLogin}`,
-    `принимал участие в хакатоне «${p.hackathonTitle}» в составе команды «${p.teamName}»`,
-    `в период с ${fmt(p.start)} по ${fmt(p.end)}.`,
+    `This certifies that GitHub user @${p.githubLogin}`,
+    `took part in the hackathon "${p.hackathonTitle}" as a member of team "${p.teamName}"`,
+    `from ${fmt(p.start)} to ${fmt(p.end)}.`,
     "",
-    `Дней с коммитами (огоньков): ${p.fires} из ${p.requiredFires} необходимых.`,
-    `Кошелёк Solana: ${p.wallet}`,
-    `Дата выдачи: ${p.issuedAt.toISOString()}`,
-    `Код документа: ${nonce}`,
+    `Days with commits (fires): ${p.fires} of ${p.requiredFires} required.`,
+    `Solana wallet: ${p.wallet}`,
+    `Issued at: ${p.issuedAt.toISOString()}`,
+    `Document code: ${nonce}`,
   ].join("\n");
 }
 
@@ -42,7 +42,7 @@ export function letterEmail(body: string, hash: string, siteUrl: string): string
     body,
     "",
     "---",
-    "SHA-256 этого текста (без строк ниже разделителя) записан в блокчейн Solana.",
-    `Проверить подлинность: ${siteUrl}/verify/${hash}`,
+    "The SHA-256 of the text above the separator is recorded on Solana.",
+    `Verify it: ${siteUrl}/verify/${hash}`,
   ].join("\n");
 }

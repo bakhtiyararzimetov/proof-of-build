@@ -6,7 +6,8 @@ import { api, type HackathonDetail, type ParticipantsResponse } from "../lib/api
 import { useAuth } from "../lib/auth";
 import { useAsync } from "../lib/useAsync";
 import { errMessage, fmtDate, shortAddr, usdc } from "../lib/format";
-import { PublicKey } from "@solana/web3.js";
+import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
+import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 import { signAndSendServerTx, useProgram } from "../lib/program";
 import { MAX_MEMBERS, explorerAddress } from "../lib/config";
 import { Avatar, Button, Card, ErrorBox, LinkButton, SectionTitle, Spinner, Stat, phaseBadge } from "../components/ui";
@@ -45,7 +46,7 @@ function JoinPanel({ h, onJoined }: { h: HackathonDetail; onJoined: () => Promis
   const { me, refresh } = useAuth();
   const ready = useReady();
   const { connection } = useConnection();
-  const { signTransaction } = useWallet();
+  const { publicKey, signTransaction } = useWallet();
   const toast = useToast();
   const navigate = useNavigate();
   const [mode, setMode] = useState<"create" | "join">("create");
@@ -87,6 +88,23 @@ function JoinPanel({ h, onJoined }: { h: HackathonDetail; onJoined: () => Promis
     if (!signTransaction) return toast.error("This wallet cannot sign transactions");
     setBusy(true);
     try {
+      // Without funds the wallet only says "could not simulate", so explain it before signing.
+      if (publicKey) {
+        const sol = await connection.getBalance(publicKey);
+        if (sol < 0.01 * LAMPORTS_PER_SOL) {
+          throw new Error("Not enough devnet SOL for fees. Switch the wallet to Devnet and get free SOL at faucet.solana.com.");
+        }
+        if (BigInt(h.depositAmount) > 0n) {
+          const ata = getAssociatedTokenAddressSync(new PublicKey(h.mint), publicKey);
+          const bal = await connection
+            .getTokenAccountBalance(ata)
+            .then((r) => BigInt(r.value.amount))
+            .catch(() => 0n);
+          if (bal < BigInt(h.depositAmount)) {
+            throw new Error(`The deposit needs ${usdc(h.depositAmount)} test USDC, the wallet has ${usdc(bal)}. Ask the organizer for test USDC.`);
+          }
+        }
+      }
       const res = mode === "create" ? await api.registerTx(h.id, teamName.trim()) : await api.joinTx(h.id, invite.trim());
       const sig = await signAndSendServerTx(connection, signTransaction, res.transaction);
       toast.ok(mode === "create" ? "Team registered" : "You joined the team", { tx: sig });

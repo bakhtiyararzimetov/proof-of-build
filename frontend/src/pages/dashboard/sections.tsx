@@ -106,6 +106,8 @@ export function RepoCard({
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
   const repo = team.repos[0];
+  // Accept "owner/repo" or a pasted GitHub link like https://github.com/owner/repo.git
+  const fullName = name.trim().replace(/^(https?:\/\/)?(www\.)?github\.com\//i, "").replace(/(\.git)?\/*$/, "");
   const box = bare ? "rounded-xl border border-line" : "card";
 
   if (repo) {
@@ -131,18 +133,22 @@ export function RepoCard({
       {isCaptain ? (
         <>
           <p className="mt-2 text-xs text-muted">
-            1. Install the Proof of Build GitHub App on the repository. 2. Enter it here as <span className="font-mono">owner/repo</span>.
+            1.{" "}
+            <a href="https://github.com/apps/proof-of-build-dev/installations/new" target="_blank" rel="noreferrer" className="font-medium text-ink underline">
+              Install the Proof of Build GitHub App
+            </a>{" "}
+            on the repository. 2. Paste its link or <span className="font-mono">owner/repo</span> here.
           </p>
           <div className="mt-3 flex gap-2">
             <input className="input" placeholder="team-alpha/project" value={name} onChange={(e) => setName(e.target.value)} />
             <Button
               loading={busy}
-              disabled={!/^[\w.-]+\/[\w.-]+$/.test(name.trim())}
+              disabled={!/^[\w.-]+\/[\w.-]+$/.test(fullName)}
               icon={<Plus className="size-4" />}
               onClick={async () => {
                 setBusy(true);
                 try {
-                  const r = await api.addRepo(team.address, name.trim());
+                  const r = await api.addRepo(team.address, fullName);
                   toast.ok("Repository connected", r.flagged ? { body: "Flagged: it was created before the hackathon started." } : undefined);
                   onAdded();
                 } catch (e) {
